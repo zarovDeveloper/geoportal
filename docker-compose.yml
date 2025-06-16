@@ -1,0 +1,18 @@
+services:
+  db:
+    platform: linux/amd64
+    image: postgis/postgis:17-3.5
+    container_name: geoportal_postgis_db
+    environment:
+      POSTGRES_USER: geoportal_user
+      POSTGRES_PASSWORD: geoportal_pass
+      POSTGRES_DB: geoportal_db
+    volumes:
+      - geoportal_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  geoportal_pgdata:
+    driver: local
