@@ -12,7 +12,28 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
+    networks:
+      - geoportal_net
+
+  mapserver:
+    image: camptocamp/mapserver:605-arm64
+    container_name: geoportal_mapserver
+    environment:
+      - MS_MAPFILE=/etc/mapserver/general/boundary.map
+    ports:
+      - "8080:80"
+    volumes:
+      - ./mapserver/maps:/etc/mapserver:ro
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - geoportal_net
 
 volumes:
   geoportal_pgdata:
     driver: local
+
+networks:
+  geoportal_net:
+    driver: bridge
