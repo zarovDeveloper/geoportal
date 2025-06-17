@@ -23,10 +23,21 @@ class AppSubSettings(BaseSettings):
     )
 
 
+class MapServerSubSettings(BaseSettings):
+    """MapServer specific settings."""
+
+    URL: str = 'http://localhost:8080'
+
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE, env_prefix='MAPSERVER_', extra='ignore'
+    )
+
+
 class Settings(BaseSettings):
     """Main settings class that aggregates all sub-settings."""
 
     app: AppSubSettings = AppSubSettings()
+    mapserver: MapServerSubSettings = MapServerSubSettings()
 
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,
