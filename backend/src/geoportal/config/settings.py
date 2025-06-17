@@ -2,7 +2,6 @@ from enum import Enum
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 ENV_FILE = '.env'
 
 
@@ -19,18 +18,19 @@ class AppSubSettings(BaseSettings):
     VERSION: str = '0.1.0'
     API_PREFIX: str = '/api/v1'
 
-    model_config = SettingsConfigDict(env_file=ENV_FILE, env_prefix='APP_', extra='ignore')
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE, env_prefix='APP_', extra='ignore'
+    )
 
 
 class Settings(BaseSettings):
-    """
-    Main settings class that aggregates all sub-settings.
-    """
+    """Main settings class that aggregates all sub-settings."""
+
     app: AppSubSettings = AppSubSettings()
 
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,
         env_file_encoding='utf-8',
         env_nested_delimiter='__',
-        extra='ignore'
+        extra='ignore',
     )
