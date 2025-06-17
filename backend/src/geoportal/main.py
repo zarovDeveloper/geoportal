@@ -31,7 +31,7 @@ def register_routers(app: FastAPI, settings: Settings):
     """
     Includes all application routers.
     """
-    app.include_router(health_router, prefix=settings.app.API_PREFIX, tags=['Health'])
+    app.include_router(health_router, prefix=settings.app.API_PREFIX)
     app.include_router(proxy_router, prefix=settings.app.API_PREFIX)
 
 
