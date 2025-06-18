@@ -12,7 +12,7 @@ from src.geoportal.modules.roles.api.v1.schemas import (
 )
 from src.geoportal.modules.roles.crud import role_crud
 
-router = APIRouter(prefix='/roles', tags=['roles'])
+router = APIRouter(prefix='/roles', tags=['Roles'])
 
 
 @router.post('/', response_model=RoleResponse, status_code=status.HTTP_201_CREATED)
