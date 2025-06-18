@@ -78,6 +78,22 @@ async def get_user(
     return UserResponse.model_validate(user)
 
 
+@router.post('/{user_id}/roles/{role_id}', response_model=UserResponse)
+async def assign_role_to_user(
+    user_id: UUID,
+    role_id: UUID,
+    db: AsyncSession = Depends(get_db),
+) -> UserResponse:
+    """Assign a role to a user."""
+    updated_user = await user_crud.assign_role_to_user(db, user_id, role_id)
+    if not updated_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id '{user_id}' or role with id '{role_id}' not found",
+        )
+    return UserResponse.model_validate(updated_user)
+
+
 @router.put('/{user_id}', response_model=UserResponse)
 async def update_user(
     user_id: UUID,

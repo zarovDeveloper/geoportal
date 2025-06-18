@@ -5,7 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.geoportal.core.security import get_password_hash
-from src.geoportal.db.models import User
+from src.geoportal.db.models import Role, User
+from src.geoportal.modules.roles.crud import role_crud
 from src.geoportal.modules.users.api.v1.schemas import UserCreate, UserUpdate
 
 
@@ -91,6 +92,25 @@ class UserCRUD:
         await db.delete(user)
         await db.commit()
         return True
+
+    async def assign_role_to_user(
+        self, db: AsyncSession, user_id: UUID, role_id: UUID
+    ) -> User | None:
+        """Assign a role to a user."""
+        user = await self.get_by_id(db, user_id)
+        if not user:
+            return None
+
+        role = await role_crud.get_by_id(db, role_id)
+        if not role:
+            return None
+
+        if role not in user.roles:
+            user.roles.append(role)
+            await db.commit()
+            await db.refresh(user, attribute_names=['roles'])
+
+        return user
 
 
 user_crud = UserCRUD()
