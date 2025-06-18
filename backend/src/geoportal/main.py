@@ -5,6 +5,7 @@ from src.geoportal.config.settings import Settings
 from src.geoportal.modules.health.api.v1.router import router as health_router
 from src.geoportal.modules.proxy.api.v1.router import router as proxy_router
 from src.geoportal.modules.roles.api.v1.router import router as roles_router
+from src.geoportal.modules.users.api.v1.router import router as users_router
 
 
 def create_application() -> FastAPI:
@@ -35,6 +36,7 @@ def register_routers(app: FastAPI, settings: Settings):
     app.include_router(health_router, prefix=settings.app.API_PREFIX)
     app.include_router(proxy_router, prefix=settings.app.API_PREFIX)
     app.include_router(roles_router, prefix=settings.app.API_PREFIX)
+    app.include_router(users_router, prefix=settings.app.API_PREFIX)
 
 
 app = create_application()

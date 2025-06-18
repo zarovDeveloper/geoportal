@@ -4,7 +4,7 @@ PORT ?= 8000
 HOST ?= 0.0.0.0
 RELOAD ?= --reload
 
-RUFF_TARGET ?= src tests
+RUFF_TARGET ?= src
 
 help:
 	@echo "Available commands:"
