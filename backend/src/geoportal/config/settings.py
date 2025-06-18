@@ -1,5 +1,6 @@
 from enum import Enum
 
+from pydantic import PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ENV_FILE = '.env'
@@ -33,11 +34,42 @@ class MapServerSubSettings(BaseSettings):
     )
 
 
+class DbSubSettings(BaseSettings):
+    """Database specific settings."""
+
+    USER: str = 'user'
+    PASSWORD: str = 'password'
+    HOST: str = 'localhost'
+    PORT: int = 5432
+    NAME: str = 'geoportaldb'
+
+    @computed_field
+    @property
+    def ASYNC_DATABASE_URI(self) -> PostgresDsn:
+        """Constructs the asynchronous database URI for the application."""
+        return PostgresDsn(
+            f'postgresql+asyncpg://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.NAME}'
+        )
+
+    @computed_field
+    @property
+    def SYNC_DATABASE_URI(self) -> PostgresDsn:
+        """Constructs the synchronous database URI for Alembic."""
+        return PostgresDsn(
+            f'postgresql://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.NAME}'
+        )
+
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE, env_prefix='DB_', extra='ignore'
+    )
+
+
 class Settings(BaseSettings):
     """Main settings class that aggregates all sub-settings."""
 
     app: AppSubSettings = AppSubSettings()
     mapserver: MapServerSubSettings = MapServerSubSettings()
+    db: DbSubSettings = DbSubSettings()
 
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,
