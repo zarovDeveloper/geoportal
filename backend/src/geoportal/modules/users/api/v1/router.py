@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.geoportal.db.models import User
 from src.geoportal.db.session import get_db
-from src.geoportal.modules.auth.dependencies import get_current_user
+from src.geoportal.modules.auth.dependencies import get_current_user, require_role
 from src.geoportal.modules.users.api.v1.schemas import (
     UserCreate,
     UserListResponse,
@@ -38,7 +38,11 @@ async def create_user(
     return UserResponse.model_validate(user)
 
 
-@router.get('/', response_model=UserListResponse)
+@router.get(
+    '/',
+    response_model=UserListResponse,
+    dependencies=[Depends(require_role('admin'))],
+)
 async def get_users(
     skip: int = Query(0, ge=0, description='Number of users to skip'),
     limit: int = Query(100, ge=1, le=1000, description='Number of users to return'),
@@ -63,7 +67,11 @@ async def read_users_me(
     return UserResponse.model_validate(current_user)
 
 
-@router.get('/{user_id}', response_model=UserResponse)
+@router.get(
+    '/{user_id}',
+    response_model=UserResponse,
+    dependencies=[Depends(require_role('admin'))],
+)
 async def get_user(
     user_id: UUID,
     db: AsyncSession = Depends(get_db),
@@ -78,7 +86,11 @@ async def get_user(
     return UserResponse.model_validate(user)
 
 
-@router.post('/{user_id}/roles/{role_id}', response_model=UserResponse)
+@router.post(
+    '/{user_id}/roles/{role_id}',
+    response_model=UserResponse,
+    dependencies=[Depends(require_role('admin'))],
+)
 async def assign_role_to_user(
     user_id: UUID,
     role_id: UUID,

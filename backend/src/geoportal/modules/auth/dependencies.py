@@ -1,3 +1,5 @@
+from typing import Any, Callable, Coroutine
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -39,3 +41,21 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
     return user
+
+
+def require_role(required_role: str) -> Callable[[User], Coroutine[Any, Any, None]]:
+    """
+    Dependency factory to require a specific role.
+    """
+
+    async def role_checker(current_user: User = Depends(get_current_user)) -> None:
+        """
+        Checks if the current user has the required role.
+        """
+        if required_role not in [role.name for role in current_user.roles]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="The user does not have the required permissions",
+            )
+
+    return role_checker

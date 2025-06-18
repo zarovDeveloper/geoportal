@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.geoportal.db.session import get_db
+from src.geoportal.modules.auth.dependencies import require_role
 from src.geoportal.modules.roles.api.v1.schemas import (
     RoleCreate,
     RoleListResponse,
@@ -12,7 +13,11 @@ from src.geoportal.modules.roles.api.v1.schemas import (
 )
 from src.geoportal.modules.roles.crud import role_crud
 
-router = APIRouter(prefix='/roles', tags=['Roles'])
+router = APIRouter(
+    prefix='/roles',
+    tags=['Roles'],
+    dependencies=[Depends(require_role('admin'))],
+)
 
 
 @router.post('/', response_model=RoleResponse, status_code=status.HTTP_201_CREATED)
