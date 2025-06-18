@@ -19,7 +19,7 @@ class AuthCRUD:
         user = await user_crud.get_by_username(db, username)
         if not user:
             return None
-        if not verify_password(password, user.hashed_password):  # type: ignore
+        if not verify_password(password, str(user.hashed_password)):
             return None
         return user
 
