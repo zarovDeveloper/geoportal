@@ -55,7 +55,7 @@ def require_role(required_role: str) -> Callable[[User], Coroutine[Any, Any, Non
         if required_role not in [role.name for role in current_user.roles]:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="The user does not have the required permissions",
+                detail='The user does not have the required permissions',
             )
 
     return role_checker

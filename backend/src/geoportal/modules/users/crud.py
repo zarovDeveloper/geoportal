@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.geoportal.core.security import get_password_hash
-from src.geoportal.db.models import Role, User
+from src.geoportal.db.models import User
 from src.geoportal.modules.roles.crud import role_crud
 from src.geoportal.modules.users.api.v1.schemas import UserCreate, UserUpdate
 
