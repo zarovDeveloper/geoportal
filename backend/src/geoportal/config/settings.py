@@ -64,12 +64,25 @@ class DbSubSettings(BaseSettings):
     )
 
 
+class AuthSubSettings(BaseSettings):
+    """Authentication specific settings."""
+
+    SECRET_KEY: str = 'your_super_secret_key'
+    ALGORITHM: str = 'HS256'
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE, env_prefix='AUTH_', extra='ignore'
+    )
+
+
 class Settings(BaseSettings):
     """Main settings class that aggregates all sub-settings."""
 
     app: AppSubSettings = AppSubSettings()
     mapserver: MapServerSubSettings = MapServerSubSettings()
     db: DbSubSettings = DbSubSettings()
+    auth: AuthSubSettings = AuthSubSettings()
 
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,

@@ -3,7 +3,9 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.geoportal.db.models import User
 from src.geoportal.db.session import get_db
+from src.geoportal.modules.auth.dependencies import get_current_user
 from src.geoportal.modules.users.api.v1.schemas import (
     UserCreate,
     UserListResponse,
@@ -49,6 +51,16 @@ async def get_users(
         users=[UserResponse.model_validate(user) for user in users],
         total=total,
     )
+
+
+@router.get('/me', response_model=UserResponse)
+async def read_users_me(
+    current_user: User = Depends(get_current_user),
+) -> UserResponse:
+    """
+    Get current user.
+    """
+    return UserResponse.model_validate(current_user)
 
 
 @router.get('/{user_id}', response_model=UserResponse)
