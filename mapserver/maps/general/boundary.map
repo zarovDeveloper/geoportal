@@ -1,52 +1,36 @@
 MAP
   NAME "boundary_map"
   STATUS ON
-  UNITS DD # Decimal Degrees, common for SRID 4326
-  # EXTENT needs to be set based on your data's actual extent
-  # For example: EXTENT -180 -90 180 90 (world)
-  # Or more specific to Sverdlovsk Oblast if known, e.g., EXTENT 56.0 56.0 66.0 62.0 (approximate)
-  # For now, let MapServer calculate it or use a broad default.
-  # If you know the extent of your 'boundary' data, you can set it here.
-  # Example for Sverdlovsk Oblast (rough, adjust as needed):
-  EXTENT 55.0 55.0 67.0 63.0
+  UNITS DD
+  EXTENT 57.2 56.0 66.2 61.9
+  SIZE 800 600
+  IMAGETYPE PNG
 
-  # Define the projection of the map output (WGS84)
   PROJECTION
     "init=epsg:4326"
   END
 
-  # Web interface metadata (optional but good practice)
   WEB
-    IMAGEPATH "/tmp/ms_tmp/"  # Path for temporary images, MapServer needs write access here INSIDE the container
-    IMAGEURL "/ms_tmp/"       # URL for temporary images
+    IMAGEPATH "/tmp/"
+    IMAGEURL "/tmp/"
     METADATA
       "wms_title" "Sverdlovsk Oblast Boundary"
-      "wms_onlineresource" "http://localhost:8080/?map=/etc/mapserver/general/boundary.map&" # Adjust if your domain/path changes
-      "wms_srs" "EPSG:4326 EPSG:3857" # Supported SRS for WMS
-      "wms_enable_request" "*" # Enable all WMS requests
+      "wms_onlineresource" "http://localhost:8080/?map=/etc/mapserver/general/boundary.map&"
+      "wms_srs" "EPSG:4326 EPSG:3857"
+      "wms_enable_request" "*"
+      "wms_feature_info_mime_type" "text/plain"
     END
   END
 
-  # Layer definition for the boundary
   LAYER
     NAME "boundary"
     STATUS ON
-    TYPE POLYGON # Or LINE if your boundaries are lines
+    TYPE LINE
     CONNECTIONTYPE POSTGIS
-    # Connection string:
-    # user=... password=... dbname=... host=... port=...
-    # Since we are using Docker Compose network, host is the service name 'db'
     CONNECTION "user=geoportal_user password=geoportal_pass dbname=geoportal_db host=db port=5432"
-    # DATA "geom from (select geom, gid from geo.boundary) as subquery using unique gid using srid=4326"
-    # A simpler DATA statement if 'gid' is your unique ID column and 'geom' is your geometry column:
-    DATA "geom FROM geo.boundary USING UNIQUE gid USING SRID=4326"
-    # If you don't have a 'gid' or other unique integer ID column, you might need to use a subquery
-    # or ensure your table has one. For WMS, a unique ID is often good.
-    # If 'gid' doesn't exist, and you just want to display, you can try:
-    # DATA "geom FROM geo.boundary USING SRID=4326"
-    # but MapServer might complain if it needs a unique ID for some operations.
 
-    # Define the projection of the layer's data
+    DATA "geom FROM geo.boundary USING UNIQUE id USING SRID=4326"
+
     PROJECTION
       "init=epsg:4326"
     END
@@ -54,10 +38,9 @@ MAP
     CLASS
       NAME "Default Boundary Style"
       STYLE
-        OUTLINECOLOR 0 0 0   # Black
-        WIDTH 1
+        OUTLINECOLOR 0 0 0
+        WIDTH 3
       END
     END
-  END # END LAYER boundary
-
-END # END MAP
+  END
+END

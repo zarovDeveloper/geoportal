@@ -1,6 +1,6 @@
-from typing import Any, Callable, Coroutine
+from typing import Any, Callable, Coroutine, Optional
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import ValidationError
@@ -13,11 +13,24 @@ from src.geoportal.modules.auth.api.v1.schemas import TokenPayload
 from src.geoportal.modules.users.crud import user_crud
 
 settings = get_settings()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f'{settings.app.API_PREFIX}/auth/token')
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=f'{settings.app.API_PREFIX}/auth/token', auto_error=False
+)
+
+
+async def get_token(
+    request: Request, token: Optional[str] = Depends(oauth2_scheme)
+) -> Optional[str]:
+    """
+    Get token from header or cookie.
+    """
+    if token:
+        return token
+    return request.cookies.get('access_token')
 
 
 async def get_current_user(
-    token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)
+    token: Optional[str] = Depends(get_token), db: AsyncSession = Depends(get_db)
 ) -> User:
     """
     Dependency to get the current authenticated user.
@@ -29,6 +42,8 @@ async def get_current_user(
         detail='Could not validate credentials',
         headers={'WWW-Authenticate': 'Bearer'},
     )
+    if token is None:
+        raise credentials_exception
     try:
         payload = jwt.decode(
             token, settings.auth.SECRET_KEY, algorithms=[settings.auth.ALGORITHM]
