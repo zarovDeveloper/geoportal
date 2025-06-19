@@ -4,10 +4,12 @@ from fastapi.responses import StreamingResponse
 
 from src.geoportal.config.get_settings import get_settings
 from src.geoportal.config.settings import Settings
+from src.geoportal.modules.auth.dependencies import require_role
 
 router = APIRouter(
     prefix='/proxy',
     tags=['Proxy'],
+    dependencies=[Depends(require_role(['user']))],
 )
 
 client = httpx.AsyncClient()

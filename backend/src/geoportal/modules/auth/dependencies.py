@@ -43,16 +43,17 @@ async def get_current_user(
     return user
 
 
-def require_role(required_role: str) -> Callable[[User], Coroutine[Any, Any, None]]:
+def require_role(required_roles: list[str]) -> Callable[[User], Coroutine[Any, Any, None]]:
     """
-    Dependency factory to require a specific role.
+    Dependency factory to require a specific set of roles.
     """
 
     async def role_checker(current_user: User = Depends(get_current_user)) -> None:
         """
-        Checks if the current user has the required role.
+        Checks if the current user has any of the required roles.
         """
-        if required_role not in [role.name for role in current_user.roles]:
+        user_roles = {role.name for role in current_user.roles}
+        if not any(role in user_roles for role in required_roles):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail='The user does not have the required permissions',

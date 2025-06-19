@@ -16,7 +16,7 @@ from src.geoportal.modules.roles.crud import role_crud
 router = APIRouter(
     prefix='/roles',
     tags=['Roles'],
-    dependencies=[Depends(require_role('admin'))],
+    dependencies=[Depends(require_role(['admin']))],
 )
 
 

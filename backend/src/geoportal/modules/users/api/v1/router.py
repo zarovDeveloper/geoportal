@@ -41,7 +41,7 @@ async def create_user(
 @router.get(
     '/',
     response_model=UserListResponse,
-    dependencies=[Depends(require_role('admin'))],
+    dependencies=[Depends(require_role(['admin']))],
 )
 async def get_users(
     skip: int = Query(0, ge=0, description='Number of users to skip'),
@@ -70,7 +70,7 @@ async def read_users_me(
 @router.get(
     '/{user_id}',
     response_model=UserResponse,
-    dependencies=[Depends(require_role('admin'))],
+    dependencies=[Depends(require_role(['admin', 'user']))],
 )
 async def get_user(
     user_id: UUID,
@@ -89,7 +89,7 @@ async def get_user(
 @router.post(
     '/{user_id}/roles/{role_id}',
     response_model=UserResponse,
-    dependencies=[Depends(require_role('admin'))],
+    dependencies=[Depends(require_role(['admin']))],
 )
 async def assign_role_to_user(
     user_id: UUID,
@@ -111,8 +111,17 @@ async def update_user(
     user_id: UUID,
     user_data: UserUpdate,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> UserResponse:
     """Update user by ID."""
+    if user_id != current_user.id and 'admin' not in [
+        role.name for role in current_user.roles
+    ]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='You do not have permission to update this user',
+        )
+
     existing_user = await user_crud.get_by_id(db, user_id)
     if not existing_user:
         raise HTTPException(
@@ -141,8 +150,17 @@ async def update_user(
 async def delete_user(
     user_id: UUID,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> None:
     """Delete user by ID."""
+    if user_id != current_user.id and 'admin' not in [
+        role.name for role in current_user.roles
+    ]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='You do not have permission to delete this user',
+        )
+
     success = await user_crud.delete(db, user_id)
     if not success:
         raise HTTPException(
