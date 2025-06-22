@@ -1,0 +1,181 @@
+MAP
+  NAME "geoportal_map"
+  STATUS ON
+  UNITS DD
+  EXTENT 57.2 56.0 66.2 61.9
+  SIZE 800 600
+  IMAGETYPE PNG
+
+  # Performance optimizations
+  CONFIG "MS_ERRORFILE" "/tmp/mapserver.log"
+  DEBUG 0
+
+  PROJECTION
+    "init=epsg:4326"
+  END
+
+  # Define custom symbols
+  SYMBOL
+    NAME "red_circle"
+    TYPE ELLIPSE
+    FILLED TRUE
+    POINTS
+      1 1
+    END
+  END
+
+  SYMBOL
+    NAME "blue_circle"
+    TYPE ELLIPSE
+    FILLED TRUE
+    POINTS
+      1 1
+    END
+  END
+
+  WEB
+    IMAGEPATH "/tmp/"
+    IMAGEURL "/tmp/"
+    METADATA
+      "wms_title" "Geoportal MapServer"
+      "wms_onlineresource" "http://localhost:8080/?map=/etc/mapserver/geoportal.map&"
+      "wms_srs" "EPSG:4326 EPSG:3857"
+      "wms_enable_request" "*"
+      "wms_feature_info_mime_type" "text/plain"
+      "wms_format" "image/png"
+      "wms_format" "application/vnd.mapbox-vector-tile"
+      "wms_format" "image/jpeg"
+      "wms_format" "image/tiff"
+      "wms_format" "image/svg+xml"
+      "wms_format" "application/x-pdf"
+      "wms_format" "application/vnd.google-earth.kml+xml"
+      "wms_format" "application/vnd.google-earth.kmz"
+      "wms_format" "application/json"
+      "wms_format" "application/x-protobuf"
+      "wms_format" "application/vnd.mapbox-vector-tile"
+    END
+  END
+
+  # Boundary Layer
+  LAYER
+    NAME "boundary"
+    STATUS ON
+    TYPE LINE
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "user=geoportal_user password=geoportal_pass dbname=geoportal_db host=db port=5432"
+
+    DATA "geom FROM geo.boundary USING UNIQUE id USING SRID=4326"
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    METADATA
+      "wms_title" "Boundary"
+      "wms_srs" "EPSG:4326 EPSG:3857"
+      "wms_enable_request" "*"
+    END
+
+    CLASS
+      NAME "Default Boundary Style"
+      STYLE
+        OUTLINECOLOR 0 0 0
+        WIDTH 3
+      END
+    END
+  END
+
+  # Attraction Layer
+  LAYER
+    NAME "attraction"
+    STATUS ON
+    TYPE POINT
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "user=geoportal_user password=geoportal_pass dbname=geoportal_db host=db port=5432"
+
+    DATA "geom FROM geo.attraction USING UNIQUE id USING SRID=4326"
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    METADATA
+      "wms_title" "Attractions"
+      "wms_srs" "EPSG:4326 EPSG:3857"
+      "wms_enable_request" "*"
+    END
+
+    CLASS
+      NAME "Attraction Points"
+      STYLE
+        SYMBOL "red_circle"
+        COLOR 255 0 0
+        SIZE 8
+        OUTLINECOLOR 255 255 255
+        OUTLINEWIDTH 1
+      END
+    END
+  END
+
+  # Museum Layer
+  LAYER
+    NAME "museum"
+    STATUS ON
+    TYPE POINT
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "user=geoportal_user password=geoportal_pass dbname=geoportal_db host=db port=5432"
+
+    DATA "geom FROM geo.museum USING UNIQUE id USING SRID=4326"
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    METADATA
+      "wms_title" "Museums"
+      "wms_srs" "EPSG:4326 EPSG:3857"
+      "wms_enable_request" "*"
+    END
+
+    CLASS
+      NAME "Museum Points"
+      STYLE
+        SYMBOL "blue_circle"
+        COLOR 0 0 255
+        SIZE 8
+        OUTLINECOLOR 255 255 255
+        OUTLINEWIDTH 1
+      END
+    END
+  END
+
+  # Park Layer
+  LAYER
+    NAME "park"
+    STATUS ON
+    TYPE POLYGON
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "user=geoportal_user password=geoportal_pass dbname=geoportal_db host=db port=5432"
+
+    DATA "geom FROM geo.park USING UNIQUE id USING SRID=4326"
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    METADATA
+      "wms_title" "Parks"
+      "wms_srs" "EPSG:4326 EPSG:3857"
+      "wms_enable_request" "*"
+    END
+
+    CLASS
+      NAME "Park Polygons"
+      STYLE
+        COLOR 0 255 0
+        OUTLINECOLOR 0 128 0
+        OUTLINEWIDTH 2
+      END
+    END
+  END
+END

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, WMSTileLayer, useMap, Polyline, Marker } from 'react-leaflet'
 import LayerControl from '@/components/map/layer-control/LayerControl'
 import MapControls from '@/components/map/map-controls/MapControls'
+import CachedWMSTileLayer from './CachedWMSTileLayer'
 import * as L from 'leaflet'
 import { Ruler, X } from 'lucide-react'
 import Button from '@/components/ui/button/Button'
@@ -19,7 +20,7 @@ interface LayerState {
     name: string
     description: string
     visible: boolean
-    type: 'wms' | 'tile'
+    type: 'tile' | 'vector' | 'wms'
     url?: string
     params?: {
         layers: string
@@ -106,9 +107,51 @@ const Map = () => {
             description: 'Administrative boundary',
             visible: true,
             type: 'wms',
-            url: 'http://localhost:8080/mapserver?',
+            url: 'http://localhost:8080/mapserver?map=/etc/mapserver/geoportal.map&',
             params: {
                 layers: 'boundary',
+                transparent: true,
+                format: 'image/png',
+            },
+            opacity: 1,
+        },
+        {
+            id: 'attraction',
+            name: 'Attractions',
+            description: 'Tourist attractions and points of interest',
+            visible: false,
+            type: 'wms',
+            url: 'http://localhost:8080/mapserver?map=/etc/mapserver/geoportal.map&',
+            params: {
+                layers: 'attraction',
+                transparent: true,
+                format: 'image/png',
+            },
+            opacity: 1,
+        },
+        {
+            id: 'museum',
+            name: 'Museums',
+            description: 'Museums and cultural sites',
+            visible: false,
+            type: 'wms',
+            url: 'http://localhost:8080/mapserver?map=/etc/mapserver/geoportal.map&',
+            params: {
+                layers: 'museum',
+                transparent: true,
+                format: 'image/png',
+            },
+            opacity: 1,
+        },
+        {
+            id: 'park',
+            name: 'Parks',
+            description: 'Parks and recreational areas',
+            visible: false,
+            type: 'wms',
+            url: 'http://localhost:8080/mapserver?map=/etc/mapserver/geoportal.map&',
+            params: {
+                layers: 'park',
                 transparent: true,
                 format: 'image/png',
             },
@@ -165,9 +208,19 @@ const Map = () => {
                             />
                         )
                     }
-                    if (layer.type === 'wms' && layer.url && layer.params) {
+                    if (layer.type === 'vector' && layer.url && layer.params) {
                         return (
                             <WMSTileLayer
+                                key={layer.id}
+                                url={layer.url}
+                                params={layer.params}
+                                opacity={layer.opacity}
+                            />
+                        )
+                    }
+                    if (layer.type === 'wms' && layer.url && layer.params) {
+                        return (
+                            <CachedWMSTileLayer
                                 key={layer.id}
                                 url={layer.url}
                                 params={layer.params}

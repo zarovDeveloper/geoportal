@@ -25,6 +25,13 @@ class UserCRUD:
         db.add(user)
         await db.commit()
         await db.refresh(user, attribute_names=['roles'])
+        
+        user_role = await role_crud.get_by_name(db, 'user')
+        if user_role and user_role not in user.roles:
+            user.roles.append(user_role)
+            await db.commit()
+            await db.refresh(user, attribute_names=['roles'])
+        
         return user
 
     async def get_by_id(self, db: AsyncSession, user_id: UUID) -> User | None:
