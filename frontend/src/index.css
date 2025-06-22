@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -191,20 +190,9 @@ button:focus-visible {
   }
 }
 
-/* @layer base {
-  * {
-    @apply border-border;
-  }
-  
-  html {
-    @apply h-full;
-  }
-  
-  body {
-    @apply h-full m-0 p-0 bg-background text-foreground;
-  }
-  
-  #root {
-    @apply h-full w-full;
-  }
-} */
+.ruler-marker-icon {
+  background-color: var(--primary);
+  border: 2px solid var(--background);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}

@@ -1,8 +1,10 @@
 import { useAuthStore } from '@/store/auth'
 import App from './App'
-import LoginPage from './pages/Login'
+import LoginPage from './pages/login/Login'
+import RegisterPage from './pages/register/Register'
 import { useEffect } from 'react'
 import { getMe } from './services/api'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 const AppShell = () => {
     const { token, setToken, setUser } = useAuthStore()
@@ -12,9 +14,8 @@ const AppShell = () => {
             try {
                 const user = await getMe()
                 setUser(user)
-            } catch (error) {
-                // If getMe fails, the token is likely invalid/expired
-                setToken('') // Clear the invalid token
+            } catch {
+                setToken('')
             }
         }
 
@@ -23,11 +24,24 @@ const AppShell = () => {
         }
     }, [token, setToken, setUser])
 
-    if (!token) {
-        return <LoginPage />
-    }
-
-    return <App />
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route 
+                    path="/login" 
+                    element={token ? <Navigate to="/" replace /> : <LoginPage />} 
+                />
+                <Route 
+                    path="/register" 
+                    element={token ? <Navigate to="/" replace /> : <RegisterPage />} 
+                />
+                <Route 
+                    path="/*" 
+                    element={token ? <App /> : <Navigate to="/login" replace />} 
+                />
+            </Routes>
+        </BrowserRouter>
+    )
 }
 
 export default AppShell
