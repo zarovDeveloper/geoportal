@@ -19,7 +19,7 @@ const Map: React.FC = () => {
     isMapReady
   } = useMapLayers(LAYERS_CONFIG, wmsUrl, center);
 
-  const { featureInfo, setFeatureInfo } = useFeatureInfo(mapObjRef, wmsLayersRef, layersStateRef, isMapReady);
+  const { features, setFeatures } = useFeatureInfo(mapObjRef, wmsLayersRef, layersStateRef, isMapReady);
 
   const {
     isRulerActive,
@@ -76,10 +76,10 @@ const Map: React.FC = () => {
         layers={layersState.map(l => ({ id: l.id, name: l.name, visible: l.visible }))}
         onLayerToggle={(layerId) => handleLayerToggle(layerId)}
       />
-      {featureInfo && (
+      {features && features.length > 0 && (
         <FeatureInfoPopup
-          html={featureInfo}
-          onClose={() => setFeatureInfo(null)}
+          features={features}
+          onClose={() => setFeatures(null)}
         />
       )}
       {isRulerActive && (

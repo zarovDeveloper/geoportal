@@ -1,7 +1,18 @@
 import { useState, useEffect } from 'react';
 
-export function useFeatureInfo(mapObjRef: React.MutableRefObject<any>, wmsLayersRef: React.MutableRefObject<any>, layersStateRef: React.MutableRefObject<any>, isMapReady: boolean) {
-  const [featureInfo, setFeatureInfo] = useState<string | null>(null);
+export interface FeatureInfoData {
+  id: string;
+  name: string;
+  description: string;
+}
+
+export function useFeatureInfo(
+  mapObjRef: React.MutableRefObject<any>,
+  wmsLayersRef: React.MutableRefObject<any>,
+  layersStateRef: React.MutableRefObject<any>,
+  isMapReady: boolean
+) {
+  const [features, setFeatures] = useState<FeatureInfoData[] | null>(null);
 
   useEffect(() => {
     if (!isMapReady) return;
@@ -9,12 +20,12 @@ export function useFeatureInfo(mapObjRef: React.MutableRefObject<any>, wmsLayers
     if (!map) return;
 
     const handleClick = async (evt: any) => {
-      setFeatureInfo(null);
+      setFeatures(null);
       const view = map.getView();
       const viewResolution = view.getResolution();
       const projection = view.getProjection();
       const activeLayers = layersStateRef.current.filter((l: any) => l.visible);
-      let allResults: string[] = [];
+      let allFeatures: FeatureInfoData[] = [];
       for (const layerCfg of activeLayers) {
         const wmsLayer = wmsLayersRef.current[layerCfg.id];
         if (!wmsLayer) continue;
@@ -34,20 +45,21 @@ export function useFeatureInfo(mapObjRef: React.MutableRefObject<any>, wmsLayers
             const response = await fetch(url);
             const data = await response.json();
             if (data.features && data.features.length > 0) {
-              allResults.push(
-                `<b>${layerCfg.name}</b><pre>${JSON.stringify(data.features.map((f: any) => f.properties), null, 2)}</pre>`
+              allFeatures.push(
+                ...data.features.map((f: any) => ({
+                  id: f.properties.id,
+                  name: f.properties.name,
+                  description: f.properties.description
+                }))
               );
             }
           } catch (e) {
-            allResults.push(`<b>${layerCfg.name}</b>: ошибка запроса`);
+            // Можно добавить обработку ошибок
           }
         }
       }
-      if (allResults.length > 0) {
-        setFeatureInfo(allResults.join('<hr/>'));
-      } else {
-        setFeatureInfo('Нет объектов в этой точке.');
-      }
+      setFeatures(allFeatures.length > 0 ? allFeatures : null);
+      console.log('FeatureInfoPopup features:', allFeatures);
     };
 
     map.on('singleclick', handleClick);
@@ -56,5 +68,5 @@ export function useFeatureInfo(mapObjRef: React.MutableRefObject<any>, wmsLayers
     };
   }, [isMapReady, mapObjRef, wmsLayersRef, layersStateRef]);
 
-  return { featureInfo, setFeatureInfo };
+  return { features, setFeatures };
 } 

@@ -30,4 +30,48 @@
 .content b {
   color: #2563eb;
   font-weight: 600;
+}
+
+.popup {
+  min-width: 260px;
+  max-width: 400px;
+  padding: 22px 28px 18px 28px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+  color: #222;
+  border: 1px solid #e5e7eb;
+}
+
+.featureBlock + .featureBlock {
+  margin-top: 18px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 14px;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  flex: 1;
+}
+
+.id {
+  font-size: 13px;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.description {
+  font-size: 15px;
+  color: #374151;
+  margin-top: 6px;
+  white-space: pre-line;
 } 
