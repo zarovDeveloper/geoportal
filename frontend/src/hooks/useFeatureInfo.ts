@@ -10,7 +10,7 @@ export function useFeatureInfo(
   mapObjRef: React.MutableRefObject<any>,
   wmsLayersRef: React.MutableRefObject<any>,
   layersStateRef: React.MutableRefObject<any>,
-  isMapReady: boolean
+  isMapReady: boolean,
 ) {
   const [features, setFeatures] = useState<FeatureInfoData[] | null>(null);
 
@@ -30,16 +30,11 @@ export function useFeatureInfo(
         const wmsLayer = wmsLayersRef.current[layerCfg.id];
         if (!wmsLayer) continue;
         const wmsSource = wmsLayer.getSource();
-        const url = wmsSource?.getFeatureInfoUrl(
-          evt.coordinate,
-          viewResolution!,
-          projection,
-          {
-            'INFO_FORMAT': 'geojson',
-            'QUERY_LAYERS': layerCfg.params.LAYERS,
-            'FEATURE_COUNT': 10,
-          }
-        );
+        const url = wmsSource?.getFeatureInfoUrl(evt.coordinate, viewResolution!, projection, {
+          INFO_FORMAT: 'geojson',
+          QUERY_LAYERS: layerCfg.params.LAYERS,
+          FEATURE_COUNT: 10,
+        });
         if (url) {
           try {
             const response = await fetch(url);
@@ -49,8 +44,8 @@ export function useFeatureInfo(
                 ...data.features.map((f: any) => ({
                   id: f.properties.id,
                   name: f.properties.name,
-                  description: f.properties.description
-                }))
+                  description: f.properties.description,
+                })),
               );
             }
           } catch (e) {
@@ -69,4 +64,4 @@ export function useFeatureInfo(
   }, [isMapReady, mapObjRef, wmsLayersRef, layersStateRef]);
 
   return { features, setFeatures };
-} 
+}

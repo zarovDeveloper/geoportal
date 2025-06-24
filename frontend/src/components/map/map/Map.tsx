@@ -10,27 +10,21 @@ import { useMapLayers } from '../../../hooks/useMapLayers';
 import styles from './map.module.css';
 
 const Map: React.FC = () => {
-  const {
+  const { mapObjRef, wmsLayersRef, layersState, setLayersState, layersStateRef, isMapReady } =
+    useMapLayers(LAYERS_CONFIG, wmsUrl, center);
+
+  const { features, setFeatures } = useFeatureInfo(
     mapObjRef,
     wmsLayersRef,
-    layersState,
-    setLayersState,
     layersStateRef,
-    isMapReady
-  } = useMapLayers(LAYERS_CONFIG, wmsUrl, center);
+    isMapReady,
+  );
 
-  const { features, setFeatures } = useFeatureInfo(mapObjRef, wmsLayersRef, layersStateRef, isMapReady);
-
-  const {
-    isRulerActive,
-    setIsRulerActive,
-    handleClearRuler,
-    totalDistance,
-    rulerPoints
-  } = useRuler(mapObjRef);
+  const { isRulerActive, setIsRulerActive, handleClearRuler, totalDistance, rulerPoints } =
+    useRuler(mapObjRef);
 
   const handleLayerToggle = (id: string) => {
-    setLayersState(prev => prev.map(l => l.id === id ? { ...l, visible: !l.visible } : l));
+    setLayersState((prev) => prev.map((l) => (l.id === id ? { ...l, visible: !l.visible } : l)));
   };
 
   const handleZoomIn = () => {
@@ -73,14 +67,11 @@ const Map: React.FC = () => {
         isRulerActive={isRulerActive}
       />
       <LayerControl
-        layers={layersState.map(l => ({ id: l.id, name: l.name, visible: l.visible }))}
+        layers={layersState.map((l) => ({ id: l.id, name: l.name, visible: l.visible }))}
         onLayerToggle={(layerId) => handleLayerToggle(layerId)}
       />
       {features && features.length > 0 && (
-        <FeatureInfoPopup
-          features={features}
-          onClose={() => setFeatures(null)}
-        />
+        <FeatureInfoPopup features={features} onClose={() => setFeatures(null)} />
       )}
       {isRulerActive && (
         <RulerPopup

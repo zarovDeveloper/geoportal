@@ -28,7 +28,7 @@ export function useMapLayers(LAYERS_CONFIG: MapLayerConfig[], wmsUrl: string, ce
     });
 
     const wmsLayers: Record<string, TileLayer<TileWMS>> = {};
-    LAYERS_CONFIG.forEach(layerCfg => {
+    LAYERS_CONFIG.forEach((layerCfg) => {
       wmsLayers[layerCfg.id] = new TileLayer({
         source: new TileWMS({
           url: wmsUrl,
@@ -48,7 +48,7 @@ export function useMapLayers(LAYERS_CONFIG: MapLayerConfig[], wmsUrl: string, ce
         center,
         zoom: 13,
       }),
-      controls: defaultControls({ zoom: false, rotate: false, attribution: false })
+      controls: defaultControls({ zoom: false, rotate: false, attribution: false }),
     });
     mapObjRef.current = olMap;
     setIsMapReady(true);
@@ -59,7 +59,7 @@ export function useMapLayers(LAYERS_CONFIG: MapLayerConfig[], wmsUrl: string, ce
 
   useEffect(() => {
     Object.entries(wmsLayersRef.current).forEach(([id, layer]) => {
-      const state = layersState.find(l => l.id === id);
+      const state = layersState.find((l) => l.id === id);
       if (state) {
         layer.setVisible(state.visible);
       }
@@ -67,4 +67,4 @@ export function useMapLayers(LAYERS_CONFIG: MapLayerConfig[], wmsUrl: string, ce
   }, [layersState]);
 
   return { mapObjRef, wmsLayersRef, layersState, setLayersState, layersStateRef, isMapReady };
-} 
+}

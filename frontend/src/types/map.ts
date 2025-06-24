@@ -11,4 +11,4 @@ export interface MapLayerConfig {
   name: string;
   params: MapLayerParams;
   visible: boolean;
-} 
+}

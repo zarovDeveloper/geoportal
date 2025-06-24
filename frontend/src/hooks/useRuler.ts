@@ -24,7 +24,7 @@ export function useRuler(mapObjRef: React.MutableRefObject<any>) {
         style: (feature) => {
           if (feature.getGeometry() instanceof LineString) {
             return new Style({
-              stroke: new Stroke({ color: '#2563eb', width: 3 })
+              stroke: new Stroke({ color: '#2563eb', width: 3 }),
             });
           }
           if (feature.getGeometry() instanceof Point) {
@@ -32,11 +32,11 @@ export function useRuler(mapObjRef: React.MutableRefObject<any>) {
               image: new CircleStyle({
                 radius: 6,
                 fill: new Fill({ color: '#fff' }),
-                stroke: new Stroke({ color: '#2563eb', width: 3 })
-              })
+                stroke: new Stroke({ color: '#2563eb', width: 3 }),
+              }),
             });
           }
-        }
+        },
       });
       map.addLayer(layer);
       rulerLayerRef.current = layer;
@@ -55,7 +55,7 @@ export function useRuler(mapObjRef: React.MutableRefObject<any>) {
     if (!map || !isRulerActive) return;
     const handleClick = (evt: any) => {
       const coord = evt.coordinate;
-      setRulerPoints(prev => [...prev, coord]);
+      setRulerPoints((prev) => [...prev, coord]);
     };
     map.on('singleclick', handleClick);
     return () => {
@@ -69,7 +69,7 @@ export function useRuler(mapObjRef: React.MutableRefObject<any>) {
     if (!source) return;
     source.clear();
     if (rulerPoints.length > 0) {
-      rulerPoints.forEach(pt => {
+      rulerPoints.forEach((pt) => {
         source.addFeature(new Feature(new Point(pt)));
       });
       if (rulerPoints.length > 1) {
@@ -100,6 +100,6 @@ export function useRuler(mapObjRef: React.MutableRefObject<any>) {
     rulerPoints,
     setRulerPoints,
     totalDistance,
-    handleClearRuler
+    handleClearRuler,
   };
-} 
+}

@@ -21,12 +21,10 @@ const FeatureInfoPopup: React.FC<FeatureInfoPopupProps> = ({ features, onClose }
           <span className={styles.name}>{feature.name}</span>
           <span className={styles.id}>ID: {feature.id}</span>
         </div>
-        {feature.description && (
-          <div className={styles.description}>{feature.description}</div>
-        )}
+        {feature.description && <div className={styles.description}>{feature.description}</div>}
       </div>
     ))}
   </Popup>
 );
 
-export default FeatureInfoPopup; 
+export default FeatureInfoPopup;

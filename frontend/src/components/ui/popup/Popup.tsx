@@ -17,7 +17,7 @@ const Popup: React.FC<PopupProps> = ({
   onClose,
   style,
   title,
-  hideHeader = false
+  hideHeader = false,
 }) => {
   return (
     <div className={[styles.popup, className].filter(Boolean).join(' ')} style={style}>
@@ -44,4 +44,4 @@ const Popup: React.FC<PopupProps> = ({
   );
 };
 
-export default Popup; 
+export default Popup;

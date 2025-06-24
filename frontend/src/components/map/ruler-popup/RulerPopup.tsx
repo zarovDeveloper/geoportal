@@ -10,16 +10,15 @@ interface RulerPopupProps {
 }
 
 const RulerPopup: React.FC<RulerPopupProps> = ({ totalDistance, pointsCount, onClear }) => (
-  <Popup
-    className={`${styles.rulerPopup} ${styles.rulerPopupPosition}`}
-    hideHeader={true}
-  >
+  <Popup className={`${styles.rulerPopup} ${styles.rulerPopupPosition}`} hideHeader={true}>
     <div className={styles.contentRow}>
       <span className={styles.distanceText}>
         {totalDistance > 0
-          ? `Длина: ${totalDistance < 1000
-              ? totalDistance.toFixed(0) + ' м'
-              : (totalDistance / 1000).toFixed(2) + ' км'}`
+          ? `Длина: ${
+              totalDistance < 1000
+                ? totalDistance.toFixed(0) + ' м'
+                : (totalDistance / 1000).toFixed(2) + ' км'
+            }`
           : 'Кликните на карту для добавления точек'}
       </span>
       {pointsCount > 1 && (
@@ -39,4 +38,4 @@ const RulerPopup: React.FC<RulerPopupProps> = ({ totalDistance, pointsCount, onC
   </Popup>
 );
 
-export default RulerPopup; 
+export default RulerPopup;

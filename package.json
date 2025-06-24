@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "format": "prettier --write \"frontend/src/**/*.{js,jsx,ts,tsx,css,scss,md,json}\""
+  }
+} 

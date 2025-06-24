@@ -2,7 +2,7 @@
   padding: 8px 14px;
   min-width: 80px;
   min-height: 28px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .rulerPopupPosition {
@@ -35,10 +35,12 @@
   cursor: pointer;
   padding: 0 2px;
   line-height: 1;
-  transition: color 0.2s, background 0.2s;
+  transition:
+    color 0.2s,
+    background 0.2s;
   margin-left: 8px;
 }
 .clearBtn:hover {
   color: #2563eb;
   background: #f3f4f6;
-} 
+}
