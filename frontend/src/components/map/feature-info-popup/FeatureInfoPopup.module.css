@@ -1,0 +1,33 @@
+.featureInfoPopup {
+  min-width: 220px;
+  max-width: 420px;
+  min-height: 40px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+}
+
+.content {
+  color: #222;
+  font-size: 15px;
+  word-break: break-word;
+}
+
+.content pre {
+  background: #f3f4f6;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 13px;
+  margin: 8px 0 0 0;
+  overflow-x: auto;
+}
+
+.content hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 12px 0;
+}
+
+.content b {
+  color: #2563eb;
+  font-weight: 600;
+} 

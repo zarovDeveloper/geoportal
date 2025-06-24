@@ -23,7 +23,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./mapserver/maps:/etc/mapserver:ro
+      - ./mapserver/conf:/etc/mapserver:ro
     depends_on:
       - db
     restart: unless-stopped
